@@ -1,0 +1,14 @@
+[Unit]
+Description=Service za zagon sensor serverja
+After=network.target
+
+[Service]
+ExecStart=/home/lubuntu/jan-projects/janenv/bin/python -u http_server.py
+WorkingDirectory=/home/lubuntu/jan-projects/sensors-server/
+StandardOutput=inherit
+StandardError=inherit
+Restart=no
+User=lubuntu
+
+[Install]
+WantedBy=multi-user.target
