@@ -80,7 +80,7 @@ class Handler(BaseHTTPRequestHandler):
 
                 with sqlConn:
                     params = "sensor_id,temperature,humidity,rssi"
-                    values = (str(id),str(temp),str(humi),str(rssi))              
+                    values = (str(id),str(temp),str(humi),int(rssi))              
                     jan_sqlite.insert_data(sqlConn, 'data', params, values)
 
                 fileData = "<html><head></head><body><h1>OK! Sprejeti podatki id = "+id+", temp = "+temp+", humi = "+humi+", rssi = "+rssi+"</h1></body></html>"
