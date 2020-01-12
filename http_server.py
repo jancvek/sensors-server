@@ -60,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
                 id = None
                 temp = ''
                 humi = ''
+                rssi = ''
 
                 if 'id' in query_parameters:
                     id = query_parameters["id"][0]
@@ -72,15 +73,17 @@ class Handler(BaseHTTPRequestHandler):
                     temp = query_parameters["temp"][0] #return -> ['21'] so ve need to add [0]
                 if 'humi' in query_parameters:
                     humi = query_parameters["humi"][0]
+                if 'rssi' in query_parameters:
+                    rssi = query_parameters["rssi"][0]
 
                 sqlConn = jan_sqlite.create_connection(currPath+"/sensor.db")
 
                 with sqlConn:
-                    params = "sensor_id,temperature,humidity"
-                    values = (str(id),str(temp),str(humi))              
+                    params = "sensor_id,temperature,humidity,rssi"
+                    values = (str(id),str(temp),str(humi),str(rssi))              
                     jan_sqlite.insert_data(sqlConn, 'data', params, values)
 
-                fileData = "<html><head></head><body><h1>OK! Sprejeti podatki id = "+id+", temp = "+temp+", humi = "+humi+"</h1></body></html>"
+                fileData = "<html><head></head><body><h1>OK! Sprejeti podatki id = "+id+", temp = "+temp+", humi = "+humi+", rssi = "+rssi+"</h1></body></html>"
                 self.wfile.write(fileData.encode('utf-8'))  
                 return
 
