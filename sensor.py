@@ -26,19 +26,23 @@ def getSensorMain(sensorId, startDate, endDate):
     dataList = []  
     currTemp = None
     currHumi = None
+    currRssi = None
     for a in data:
 
         if currTemp == None:
             currTemp = a[3]
             currHumi = a[2]
+            currRssi = a[4]
 
-        d = {"created_on": a[0], "sensor_id": a[1], "humidity": a[2], "temperature": a[3], "rssi": a[4]}
+        # d = {"created_on": a[0], "sensor_id": a[1], "humidity": a[2], "temperature": a[3], "rssi": a[4]}
+        d = {"date": a[0], "value": a[3]}
         dataList.append(d)
 
     returnObj = {
         "sensorId": sensorId, 
         "currentTemp":currTemp,
         "currentHumidity": currHumi,
+        "currentRssi": currRssi,
         "data": dataList
     }
 
