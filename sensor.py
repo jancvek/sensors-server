@@ -17,19 +17,18 @@ def getSensorMain(sensorId, startDate, endDate):
     sqlConn = jan_sqlite.create_connection(currPath+"/sensor.db")
 
     # //SELECT * FROM data WHERE sensor_id = '1' AND created_on BETWEEN '2020-02-15' AND '2020-02-15 23:59:59'
-    selectStr = "SELECT * FROM data WHERE sensor_id = "+sensorId+" AND created_on BETWEEN "+startDate+" and "+endDate
-
+    selectStr = "SELECT * FROM data WHERE sensor_id = '"+sensorId+"' AND created_on BETWEEN '"+startDate+"' and '"+endDate+"'"
+    print(selectStr)
     with sqlConn:
         # data = jan_sqlite.get_data_all(sqlConn,'data')
         data = jan_sqlite.run_query(sqlConn, selectStr)
         
-
     dataList = []  
     currTemp = None
     currHumi = None
     for a in data:
 
-        if currTemp = None:
+        if currTemp == None:
             currTemp = a[3]
             currHumi = a[2]
 
@@ -38,8 +37,8 @@ def getSensorMain(sensorId, startDate, endDate):
 
     returnObj = {
         "sensorId": sensorId, 
-        "currentTemp":latestMasaDays,
-        "currentHumidity": lastCheck,
+        "currentTemp":currTemp,
+        "currentHumidity": currHumi,
         "data": dataList
     }
 
