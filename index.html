@@ -119,7 +119,8 @@
 
                 var jqxhr = $.getJSON( "../tempApi/main?sensorId=1&startDate=2020-02-15&endDate=2020-02-15%2023:59:59", function(data) {
                     console.log( "success" );
-                    console.log(data.data);
+                    var dataJson = JSON.parse(data);
+                    console.log(dataJson.data);
                 })
                 .done(function(data) {
                     console.log( "second success" );
@@ -134,8 +135,9 @@
 
                 //Read the data
                 d3.json("../tempApi/main?sensorId=1&startDate=2020-02-15&endDate=2020-02-15%2023:59:59",function(data){  
-
-                    console.log(data.data);
+                    var data1 = JSON.parse(data);
+                    data = data1.data;
+                    console.log(data);
 
                     // Add X axis --> it is a date format
                     var x = d3.scaleTime()
