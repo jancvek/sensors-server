@@ -132,7 +132,37 @@ class Handler(BaseHTTPRequestHandler):
                     return
 
                 # eg: '1','2020-02-15','2020-02-15 23:59:59'
-                resJson = sensor.getSensorMain(sensorId,startDate,endDate)
+                resJson = sensor.getSensorById(sensorId,startDate,endDate)
+
+                mStr = json.dumps(resJson)
+                mBin = mStr.encode('utf-8')
+
+                self.wfile.write(mBin) 
+
+            elif self.path.find('/tempApi/table') > -1:
+                #send code 200 response  
+                self.send_response(200)
+
+                #send header first  
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()    
+
+                query_parameters = parse_qs(urlparse(self.path).query)
+
+                sensorId = ''
+                startDate = ''
+                endDate = ''
+
+                if 'top' in query_parameters:
+                    top = query_parameters["top"][0]
+                else:
+                    print("parameter top je nujen!")
+                    fileData = "<html><head></head><body><h1>NI PODATKA top!</h1></body></html>"
+                    self.wfile.write(fileData.encode('utf-8'))  
+                    return
+
+                # eg: '1','2020-02-15','2020-02-15 23:59:59'
+                resJson = sensor.getSensors(top)
 
                 mStr = json.dumps(resJson)
                 mBin = mStr.encode('utf-8')

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=.6, maximum-scale=12.0, minimum-scale=.25, user-scalable=yes"/>
+        <title>Home temperature</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
+
+    </head>
+    <style>
+
+    </style>
+    <body>
+        <div class="container">
+            <div class="row top-buffer-xl">
+                <h1>Temperatura spodaj:</h1>
+            </div>
+            
+            <!-- TRENUTNO STANJE: -->
+            <div class="row top-buffer-xl">
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <div class="row">
+                        <div class="card text-center border-success mb-3 mx-auto" style="max-width: 18rem;" id="masa_card">
+                            <div class="card-header"><h5>Dnevna soba:</h5></div>
+                            <div class="card-body">
+                              <h3 class="card-title" id="masa_curr_days">22.1 °C</h3>
+                              <p class="card-text">13 min nazaj</p>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <div class="col-sm-8 col-md-9 col-lg-10">
+                    <div id="my_dataviz1"></div>
+                </div> 
+            </div>
+            <div class="row top-buffer-xl">
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <div class="row">
+                        <div class="card text-center border-success mb-3 mx-auto" style="max-width: 18rem;" id="masa_card">
+                            <div class="card-header"><h5>Dnevna soba:</h5></div>
+                            <div class="card-body">
+                              <h3 class="card-title" id="masa_curr_days">22.1 °C</h3>
+                              <p class="card-text">13 min nazaj</p>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <div class="col-sm-8 col-md-9 col-lg-10">
+                    <div id="my_dataviz2"></div>
+                </div> 
+            </div>
+            <div class="row top-buffer-xl">
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <div class="row">
+                        <div class="card text-center border-success mb-3 mx-auto" style="max-width: 18rem;" id="masa_card">
+                            <div class="card-header"><h5>Dnevna soba:</h5></div>
+                            <div class="card-body">
+                              <h3 class="card-title" id="masa_curr_days">22.1 °C</h3>
+                              <p class="card-text">13 min nazaj</p>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <div class="col-sm-8 col-md-9 col-lg-10">
+                    <div id="my_dataviz3"></div>
+                </div> 
+            </div>
+
+        </div>
+        
+        <script>
+            var TEMP_MIN_DISPLAY = 15;  //kje se začne pogled grafa pri stopinjah celzijah
+            var TEMP_MAX_DISPLAY = 25;
+            var TEMP_LINE = 20; //kje je črta v stopinjah celzija
+            var TEMP_LINE_MIN = 17;
+            var TEMP_LINE_MAX = 23;
+
+            $( document ).ready(function() {
+                //SELECT * FROM data WHERE created_on between '2020-02-15' and '2020-02-15 23:59:59'
+
+
+
+                createTempGraph("#my_dataviz1");
+                //createTempGraph("#my_dataviz2");
+                //createTempGraph("#my_dataviz3");
+ 
+            });
+
+            function createTempGraph(divId)
+            {
+                // set the dimensions and margins of the graph
+                var margin = {top: 10, right: 30, bottom: 30, left: 60},
+                    width = 800 - margin.left - margin.right,
+                    height = 170 - margin.top - margin.bottom;
+                
+                // append the svg object to the body of the page
+                var svg = d3.select(divId)
+                    .append("svg")
+                    .attr("width", "100%")       // zakomentiral zaradi glej:
+                    .attr("height", "170px")     // https://stackoverflow.com/questions/44833788/making-svg-container-100-width-and-height-of-parent-container-in-d3-v4-instead
+                    .attr("preserveAspectRatio", "none")
+                    .attr("viewBox", "0 0 800 170")
+                .append("g")
+                    .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
+                
+                debugger;
+                
+                // define function for time parse 
+                var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+                var jqxhr = $.getJSON( "../tempApi/main?sensorId=1&startDate=2020-02-15&endDate=2020-02-15%2023:59:59", function(data) {
+                    console.log( "success" );
+                    var dataJson = JSON.parse(data);
+                    console.log(dataJson.data);
+                })
+                .done(function(data) {
+                    console.log( "second success" );
+
+                })
+                .fail(function() {
+                    console.log( "error" );
+                })
+                .always(function() {
+                    console.log( "complete" );
+                }); 
+
+                //Read the data
+                d3.json("../tempApi/main?sensorId=1&startDate=2020-02-15&endDate=2020-02-15%2023:59:59",function(data){  
+                    var data1 = JSON.parse(data);
+                    data = data1.data;
+                    console.log(data);
+
+                    // Add X axis --> it is a date format
+                    var x = d3.scaleTime()
+                    .domain(d3.extent(data, function(d) { return parseDate(d.date); }))
+                    .range([ 0, width ]);
+                    svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x));
+                
+                    // Add Y axis
+                    var y = d3.scaleLinear()
+                    .domain([TEMP_MIN_DISPLAY, TEMP_MAX_DISPLAY])   //default namesto TEMP_MAX_DISPLAY: d3.max(data, function(d) { return +d.value; })
+                    .range([ height, 0 ]);
+                    svg.append("g")
+                    .call(d3.axisLeft(y));
+                
+                    // Add the line
+                    svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                        .x(function(d) { return x(parseDate(d.date)) })
+                        .y(function(d) { return y(d.value) })
+                        )      
+
+                    //DODANA ČRTA NA VIŠINI ENE
+                    svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "silver")
+                    .attr("stroke-width", 1.5)
+                    .attr("stroke-opacity", 0.2)
+                    .attr("d", d3.line()
+                        .x(function(d) { return x(parseDate(d.date)) })
+                        .y(function(d) { return y(TEMP_LINE) })
+                        )       
+
+                    //DODANA ČRTA NA VIŠINI ENE
+                    svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "blue")
+                    .attr("stroke-width", 1.5)
+                    .attr("stroke-opacity", 0.2)
+                    .attr("d", d3.line()
+                        .x(function(d) { return x(parseDate(d.date)) })
+                        .y(function(d) { return y(TEMP_LINE_MIN) })
+                        ) 
+
+                    //DODANA ČRTA NA VIŠINI ENE
+                    svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 1.5)
+                    .attr("stroke-opacity", 0.2)
+                    .attr("d", d3.line()
+                        .x(function(d) { return x(parseDate(d.date)) })
+                        .y(function(d) { return y(TEMP_LINE_MAX) })
+                        ) 
+
+
+                        // Add the scatterplot
+                    svg.selectAll("dot")
+                        .data(data)
+                    .enter().append("circle")
+                        .attr("fill", "steelblue")
+                        .attr("stroke", "none")
+                        .attr("r", 3.5)
+                        .attr("cx", function(d) { return x(parseDate(d.date)); })
+                        .attr("cy", function(d) { return y(d.value); });
+                       
+                    }) 
+            }
+        </script>
+    </body>
+</html>

@@ -12,7 +12,7 @@ sys.path.insert(1, libPath)
 import jan_sqlite
 
 
-def getSensorMain(sensorId, startDate, endDate):
+def getSensorById(sensorId, startDate, endDate):
 
     sqlConn = jan_sqlite.create_connection(currPath+"/sensor.db")
 
@@ -43,6 +43,34 @@ def getSensorMain(sensorId, startDate, endDate):
         "currentTemp":currTemp,
         "currentHumidity": currHumi,
         "currentRssi": currRssi,
+        "data": dataList
+    }
+
+    dJson = json.dumps(returnObj)
+
+    print(dJson)
+
+    return dJson
+
+def getSensors(topInt):
+
+    sqlConn = jan_sqlite.create_connection(currPath+"/sensor.db")
+
+    # //SELECT * FROM data WHERE sensor_id = '1' AND created_on BETWEEN '2020-02-15' AND '2020-02-15 23:59:59'
+    selectStr = "SELECT TOP "+topInt+" * FROM data"
+    print(selectStr)
+    with sqlConn:
+        # data = jan_sqlite.get_data_all(sqlConn,'data')
+        data = jan_sqlite.run_query(sqlConn, selectStr)
+        
+    dataList = []  
+    for a in data:
+
+        # d = {"created_on": a[0], "sensor_id": a[1], "humidity": a[2], "temperature": a[3], "rssi": a[4]}
+        d = {"sensorId": a[1], "date": a[0], "humi": a[2], "temp": a[3], "rssi": a[4]}
+        dataList.append(d)
+
+    returnObj = {
         "data": dataList
     }
 
