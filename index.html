@@ -80,6 +80,7 @@
 
             function fillTable(jsonData)
             {
+                var i = 0;
                 jsonData.forEach(el => {
                     console.log(el);
 
@@ -98,13 +99,15 @@
 
                     $('#dataTable > tbody:last-child').append(
                         '<tr>'+
-                            '<th scope="row" class='+statusClass+'>'+el.id+'</th>'+
+                            '<th scope="row" class='+statusClass+'>'+i+'</th>'+
                             '<td class='+statusClass+'>'+localT+'</td>'+
-                            '<td class='+statusClass+'>'+el.user+'</td>'+
-                            '<td class='+statusClass+'>'+el.state+'</td>'+
-                            '<td class='+statusClass+'>'+el.min_days+'</td>'+
+                            '<td class='+statusClass+'>'+el.sensorId+'</td>'+
+                            '<td class='+statusClass+'>'+el.temp+'</td>'+
+                            '<td class='+statusClass+'>'+el.humi+'</td>'+
+                            '<td class='+statusClass+'>'+el.rssi+'</td>'+
                         '</tr>'
-                    );                  
+                    );         
+                    i++;         
                 });
             }
 
