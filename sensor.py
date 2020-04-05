@@ -57,7 +57,7 @@ def getSensors(topInt):
     sqlConn = jan_sqlite.create_connection(currPath+"/sensor.db")
 
     # //SELECT * FROM data WHERE sensor_id = '1' AND created_on BETWEEN '2020-02-15' AND '2020-02-15 23:59:59'
-    selectStr = "SELECT TOP "+topInt+" * FROM data"
+    selectStr = "SELECT * FROM data LIMIT "+topInt
     print(selectStr)
     with sqlConn:
         # data = jan_sqlite.get_data_all(sqlConn,'data')

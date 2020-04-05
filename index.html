@@ -58,7 +58,7 @@
 
             function initPage()
             {
-                var jqxhr = $.getJSON( "../tempApi/table", function(data) {
+                var jqxhr = $.getJSON( "../tempApi/table?top=30", function(data) {
                     console.log( "success" );
                     
                     json = JSON.parse(data);
